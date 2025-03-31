@@ -1,0 +1,105 @@
+openapi: 3.0.0
+info:
+  title: JWT Generator API
+  description: API para generar y verificar tokens JWT
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:3000
+
+paths:
+  /:
+    get:
+      summary: Página principal
+      description: Renderiza la página principal, opcionalmente con un token
+      parameters:
+        - in: query
+          name: token
+          schema:
+            type: string
+          description: Token JWT opcional para mostrar en la página
+      responses:
+        '200':
+          description: Página HTML renderizada
+
+  /public-key:
+    get:
+      summary: Obtener clave pública
+      description: Devuelve la clave pública en formato PEM
+      responses:
+        '200':
+          description: Clave pública en formato PEM
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /generate-token:
+    post:
+      summary: Generar token JWT
+      description: Genera un nuevo token JWT y redirige a la página principal
+      responses:
+        '302':
+          description: Redirección a la página principal con el token como parámetro de consulta
+
+  /token:
+    post:
+      summary: Generar token JWT (JSON)
+      description: Genera un nuevo token JWT y lo devuelve en formato JSON
+      responses:
+        '200':
+          description: Token JWT generado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
+  /verify-token:
+    post:
+      summary: Verificar token JWT
+      description: Verifica la validez de un token JWT proporcionado
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+              required:
+                - token
+      responses:
+        '200':
+          description: Token válido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Token is valid"
+        '401':
+          description: Token inválido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Token is invalid"
+        '400':
+          description: Token no proporcionado
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Token is required"

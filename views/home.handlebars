@@ -1,0 +1,54 @@
+<div class="container mt-5">
+    <h1 class="mb-4">Generador JWT</h1>
+
+    {{#if token}}
+        <div class="card mb-4">
+            <div class="card-body">
+                <h2 class="card-title">Token generado:</h2>
+                <div class="form-group">
+                    <textarea id="token" class="form-control mb-2" rows="3" readonly>{{token}}</textarea>
+                    <button id="copy-btn" class="btn btn-primary">Copiar</button>
+                </div>
+            </div>
+        </div>
+    {{/if}}
+
+    <div class="card">
+        <div class="card-body">
+            <form action="/generate-token" method="POST">
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-success btn-lg">Generar token</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const copyBtn = document.getElementById('copy-btn');
+    const tokenTextarea = document.getElementById('token');
+
+    if (copyBtn && tokenTextarea) {
+        copyBtn.addEventListener('click', function() {
+            tokenTextarea.select();
+            tokenTextarea.setSelectionRange(0, 99999); // For mobile devices
+
+            navigator.clipboard.writeText(tokenTextarea.value.trim())
+                .then(() => {
+                    copyBtn.textContent = 'Copiado!';
+                    copyBtn.classList.remove('btn-primary');
+                    copyBtn.classList.add('btn-success');
+                    setTimeout(() => {
+                        copyBtn.textContent = 'Copiar';
+                        copyBtn.classList.remove('btn-success');
+                        copyBtn.classList.add('btn-primary');
+                    }, 2000);
+                })
+                .catch(err => {
+                    console.error('Error al copiar el token: ', err);
+                    alert('No se pudo copiar el token. Por favor, cópielo manualmente.');
+                });
+        });
+    }
+});
+</script>
